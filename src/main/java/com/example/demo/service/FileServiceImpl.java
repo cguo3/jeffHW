@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 
 @Service
-public class FileUploadServiceImpl implements FileUploadService {
+public class FileServiceImpl implements FileService {
 
     private final FileMetaDataRepository fileMetaDataRepository;
 
@@ -19,7 +19,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 
     @Autowired
-    public FileUploadServiceImpl(FileMetaDataRepository fileMetaDataRepository) {
+    public FileServiceImpl(FileMetaDataRepository fileMetaDataRepository) {
         this.fileMetaDataRepository = fileMetaDataRepository;
     }
 
@@ -52,5 +52,10 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public void saveMetaData(FileMetaData metaData) {
         fileMetaDataRepository.save(metaData);
+    }
+
+    @Override
+    public FileMetaData getMetaData(Long fileId) {
+        return fileMetaDataRepository.findOne(fileId);
     }
 }

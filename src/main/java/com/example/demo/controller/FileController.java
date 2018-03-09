@@ -1,15 +1,11 @@
 package com.example.demo.controller;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.example.demo.model.FileMetaData;
-import com.example.demo.service.FileUploadService;
+import com.example.demo.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,12 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/files")
 public class FileController {
 
-    private final FileUploadService fileUploadService;
+    private final FileService fileService;
 
 
     @Autowired
-    public FileController(FileUploadService fileUploadService) {
-        this.fileUploadService = fileUploadService;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
 //    @GetMapping("/")
@@ -56,16 +52,19 @@ public class FileController {
 
         FileMetaData metaData = new FileMetaData(fileName);
 
-        String targetFilePath = fileUploadService.storeFile(file, metaData);
+        String targetFilePath = fileService.storeFile(file, metaData);
         metaData.setFilePath(targetFilePath);
-        fileUploadService.saveMetaData(metaData);
+        fileService.saveMetaData(metaData);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
     @GetMapping(path = "{fileId}/metadata")
-    public
+    public ResponseEntity<FileMetaData> getFileMetaData(@PathVariable Long fileId) {
+        FileMetaData fileMetaData = fileService.getMetaData(fileId);
+        return new ResponseEntity<FileMetaData>(fileMetaData, HttpStatus.OK);
+    }
 
 
     @ExceptionHandler(FileNotFoundException.class)
